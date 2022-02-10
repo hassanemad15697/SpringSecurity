@@ -17,7 +17,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication().
-                withUser("amro").password(passwordEncoder().encode("Amro123#")).roles("ADMIN").
+                withUser("amro").password(passwordEncoder().encode("Amro123#")).roles("MANAGEMENT").
                 and().
                 withUser("israa").password(passwordEncoder().encode("Israa123#")).roles("USER").
                 and().
@@ -26,7 +26,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests().anyRequest().authenticated().and().httpBasic();
+        http.
+                authorizeHttpRequests().
+                //anyRequest().authenticated().
+                antMatchers("/api/home").permitAll().
+                antMatchers("/api/profile").authenticated().
+                antMatchers("/api/management").hasAnyRole("ADMIN","MANAGEMENT").
+                antMatchers("/api/admin/**").hasRole("ADMIN").
+                and().
+                httpBasic();
     }
 @Bean
     PasswordEncoder passwordEncoder ()
