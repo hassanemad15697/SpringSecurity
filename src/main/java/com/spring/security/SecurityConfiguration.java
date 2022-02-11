@@ -1,8 +1,10 @@
 package com.spring.security;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,24 +15,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+    private UserPricipalService userPricipalService ;
+
+    @Autowired
+    public SecurityConfiguration(UserPricipalService userPricipalService){
+        this.userPricipalService = userPricipalService;
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().
-                withUser("amro")
-                    .password(passwordEncoder().encode("Amro123#"))
-                    .roles("MANAGEMENT")
-                    .authorities("ACCESS_2").
-                and().
-                withUser("israa")
-                    .password(passwordEncoder().encode("Israa123#"))
-                    .roles("USER")
-                    .authorities("ACCESS_3").
-                and().
-                withUser("hassan")
-                    .password(passwordEncoder().encode("Hassan123#"))
-                    .roles("ADMIN")
-                    .authorities("ACCESS_1");
+
+        auth.authenticationProvider(daoAuthenticationProvider());
     }
 
     @Override
@@ -41,13 +36,23 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 antMatchers("/api/home").permitAll().
                 antMatchers("/api/profile").authenticated().
                 antMatchers("/api/management").hasAnyRole("ADMIN","MANAGEMENT").
-                antMatchers("/api/admin/**").hasAuthority("ACCESS_1").
+                antMatchers("/api/admin/**").hasAuthority("ACCESS_ADMIN").
                 and().
                 httpBasic();
     }
-@Bean
+    @Bean
     PasswordEncoder passwordEncoder ()
     {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    DaoAuthenticationProvider  daoAuthenticationProvider()
+    {
+
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        daoAuthenticationProvider.setUserDetailsService(userPricipalService);
+        return daoAuthenticationProvider;
     }
 }

@@ -2,6 +2,8 @@ package com.spring.model;
 
 
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
@@ -35,7 +37,8 @@ public class User {
     private int active;
 
     @Autowired
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -44,6 +47,7 @@ public class User {
 
     @Autowired
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
     @JoinTable(
             name = "user_authority",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -57,4 +61,5 @@ public class User {
         this.address = address;
         this.active = active;
     }
+
 }
