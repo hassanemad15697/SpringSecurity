@@ -38,7 +38,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 antMatchers("/api/management").hasAnyRole("ADMIN","MANAGEMENT").
                 antMatchers("/api/admin/**").hasAuthority("ACCESS_ADMIN").
                 and().
-                httpBasic();
+                formLogin().
+                loginPage("/api/login");
     }
     @Bean
     PasswordEncoder passwordEncoder ()
