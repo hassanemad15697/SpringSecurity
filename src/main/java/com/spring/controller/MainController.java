@@ -3,8 +3,9 @@ package com.spring.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping("api/")
 public class MainController {
 
@@ -18,12 +19,17 @@ public class MainController {
     public String profile() {
         return "profile/index";
     }
+
     @GetMapping("admin")
     public String admin() {
-        return "admin/index";
+        return "admin";
     }
     @GetMapping("management")
     public String management() {
-        return "management/index";
+        return "manager , admin";
+    }
+    @GetMapping("user")
+    public String user() {
+        return "user , manager , admin";
     }
 }

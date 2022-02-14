@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -48,9 +50,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 addFilter(new JwtAuthenticationFilter(authenticationManager())).
                 addFilter(new JwtAuthorizationFilter(authenticationManager(),this.userDAO)).
                 authorizeHttpRequests().
-                antMatchers(HttpMethod.POST,"/api/login").permitAll().
+                antMatchers(HttpMethod.POST,"login").permitAll().
+                antMatchers(HttpMethod.POST,"/logintest").permitAll().
                 antMatchers("/api/home").permitAll().
                 antMatchers("/api/profile").authenticated().
+                antMatchers("/api/user").hasRole("USER").
                 antMatchers("/api/management").hasAnyRole("ADMIN", "MANAGEMENT").
                 antMatchers("/api/admin/**").hasAuthority("ACCESS_ADMIN").
                 anyRequest().authenticated();
@@ -72,5 +76,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         daoAuthenticationProvider.setUserDetailsService(userPricipalService);
         return daoAuthenticationProvider;
+    }
+
+    @Bean(BeanIds.AUTHENTICATION_MANAGER)
+    @Override
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
     }
 }
