@@ -18,13 +18,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-    private UserPricipalService userPricipalService ;
-    private UserDAO userDAO;
+    private final UserPricipalService userPricipalService ;
+    private final UserDAO userDAO;
 
     @Autowired
     public SecurityConfiguration(UserPricipalService userPricipalService, UserDAO userDAO) {
@@ -36,7 +35,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth) {
 
         auth.authenticationProvider(daoAuthenticationProvider());
     }
@@ -83,4 +82,5 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected AuthenticationManager authenticationManager() throws Exception {
         return super.authenticationManager();
     }
+
 }
